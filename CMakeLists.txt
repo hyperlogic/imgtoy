@@ -3,16 +3,12 @@ project(sdl2stub LANGUAGES CXX)
 
 set(PROJECT_NAME sdl2stub)
 
-if(WIN32)
-    set(VCPKG_INCLUDE_DIR "$ENV{VCPKG_ROOT}/installed/x64-windows/include")
-    set(VCPKG_LIB_DIR "$ENV{VCPKG_ROOT}/installed/x64-windows/lib")
-    set(SDL2_LIBRARIES ${VCPKG_LIB_DIR}/SDL2.lib ${VCPKG_LIB_DIR}/manual-link/SDL2main.lib)
-    include_directories($VCPKG_INCLUDE_DIR)
-else()
-    find_package(SDL2 REQUIRED)
-endif()
-
 find_package(OpenGL REQUIRED)
+include_directories(${GL_INCLUDE_DIRS})
+
+find_package(SDL2 CONFIG REQUIRED)
+get_target_property(SDL2_INCLUDE_DIRS SDL2::SDL2 INTERFACE_INCLUDE_DIRECTORIES)
+include_directories(${SDL2_INCLUDE_DIRS})
 
 add_executable(${PROJECT_NAME} src/main.cpp)
 
@@ -20,6 +16,6 @@ if(WIN32)
     set_target_properties(${PROJECT_NAME} PROPERTIES LINK_FLAGS /SUBSYSTEM:WINDOWS)
 endif()
 
-target_link_libraries(${PROJECT_NAME} ${SDL2_LIBRARIES} opengl32)
+target_link_libraries(${PROJECT_NAME} ${OPENGL_LIBRARIES} SDL2::SDL2 SDL2::SDL2main)
 
 
