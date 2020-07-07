@@ -6,7 +6,7 @@ set(PROJECT_NAME sdl2stub)
 find_package(OpenGL REQUIRED)
 include_directories(${GL_INCLUDE_DIRS})
 
-find_package(SDL2 CONFIG REQUIRED)
+find_package(SDL2 REQUIRED)
 get_target_property(SDL2_INCLUDE_DIRS SDL2::SDL2 INTERFACE_INCLUDE_DIRECTORIES)
 include_directories(${SDL2_INCLUDE_DIRS})
 
@@ -16,6 +16,6 @@ if(WIN32)
     set_target_properties(${PROJECT_NAME} PROPERTIES LINK_FLAGS /SUBSYSTEM:WINDOWS)
 endif()
 
-target_link_libraries(${PROJECT_NAME} ${OPENGL_LIBRARIES} SDL2::SDL2 SDL2::SDL2main)
+target_link_libraries(${PROJECT_NAME} PRIVATE ${OPENGL_LIBRARIES} SDL2::SDL2 SDL2::SDL2main)
 
 
