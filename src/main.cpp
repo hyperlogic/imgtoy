@@ -55,11 +55,36 @@ float linearToSRGB(float i)
 
 void processImage(Image& img)
 {
+    // convert from RGB to YUV
+
+    // BT.709
+    for (uint32_t y = 0; y < img.height; y++)
+    {
+        for (uint32_t x = 0; x < img.width; x++)
+        {
+            uint8_t* p = img.data.data() + y * img.width * 3 + x * 3;
+
+            float R = *p;
+            float G = *(p + 1);
+            float B = *(p + 2);
+
+            float Y = 16.0f + 0.0620071f * B + 0.614231f * G + 0.182586f * R;
+            float U = 128.0f + 0.439216f * B - 0.338572f * G - 0.100644f * R;
+            float V = 128.0f - 0.0402735f * B - 0.398942f * G + 0.439216f * R;
+
+            *p = (uint8_t)glm::clamp(Y, 0.0f, 255.0f);
+            *(p + 1) = (uint8_t)glm::clamp(U, 0.0f, 255.0f);
+            *(p + 2) = (uint8_t)glm::clamp(V, 0.0f, 255.0f);
+        }
+    }
+
+    /*
     // apply 2.2 gamma to each pixel.
     for (auto& i : img.data)
     {
         i = (uint8_t)glm::clamp(linearToSRGB(i), 0.0f, 255.0f);
     }
+    */
 }
 
 void dumpTable()
@@ -119,13 +144,14 @@ int main(int argc, char *argv[])
     }
 
     Image img;
-    if (!img.Load("texture/quest-video-out.PNG"))
+    if (!img.Load("texture/T_VideoCallThumbnailYellow.png"))
     {
         Log::printf("failed to load img\n");
     }
 
     processImage(img);
-    dumpTable();
+
+    img.Save("texture/T_VideoCallThumbnailYellow_YUV.png");
 
     Texture::Params texParams = {FilterType::LinearMipmapLinear, FilterType::Linear, WrapType::ClampToEdge, WrapType::ClampToEdge};
     static Texture* imgTexture = new Texture(img, texParams);

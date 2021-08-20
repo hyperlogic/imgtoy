@@ -3,7 +3,8 @@
 #include <cstdarg>
 
 // Console stub
-struct Console {
+class Console {
+public:
     void Write(const char* buffer, size_t size) {}
 };
 

@@ -117,17 +117,19 @@ bool Image::Load(const std::string& filenameIn)
     return loaded;
 }
 
-bool Image::Save(const std::string& filename) const
+bool Image::Save(const std::string& filenameIn) const
 {
+    std::string fullFilename = GetRootPath() + filenameIn;
+    const char* filename = fullFilename.c_str();
 #ifdef _WIN32
     FILE *fp = NULL;
-    fopen_s(&fp, filename.c_str(), "wb");
+    fopen_s(&fp, filename, "wb");
 #else
-    FILE *fp = fopen(filename.c_str(), "wb");
+    FILE *fp = fopen(filename, "wb");
 #endif
     if (!fp)
     {
-        Log::printf("Error: Failed to save texture \"%s\"\n", filename);
+        Log::printf("Error: Failed to fopen texture \"%s\"\n", filename);
         return false;
     }
 
